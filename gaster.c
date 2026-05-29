@@ -26,6 +26,8 @@
 #	include <IOKit/usb/IOUSBLib.h>
 #endif
 
+#include <inttypes.h>
+
 #define DFU_DNLOAD (1)
 #define AES_CMD_DEC (1U)
 #define APPLE_VID (0x5AC)
@@ -1665,16 +1667,16 @@ gaster_readmem(usb_handle_t *handle, const char *addr_str) {
 		if(gaster_command(handle, data, data_sz, &response, len + 2 * sizeof(r))) {
 		memcpy(&r, response, sizeof(r));
 		if(r != DONE_MAGIC) {
-			printf("[-]gaster_readmem response[0] is not DONE_MAGIC, which is %llx\n", r);
+			printf("[-]gaster_readmem response[0] is not DONE_MAGIC, which is %" PRIx64 "\n", r);
 			free(response);
 			return false;
 		}
 		memcpy(&r, response + sizeof(r), sizeof(r));
-		printf("[+]gaster_readmem response[1] (dest) is %llx\n", r);
+		printf("[+]gaster_readmem response[1] (dest) is %" PRIx64 "\n", r);
 		//memcpy(dst, response + 2 * sizeof(r), len);
 		for(size_t i=2; i < len/8+2; i++){
 			memcpy(&r, response + i * sizeof(r), sizeof(r));
-			printf("[+]gaster_readmem response[%zd] is %llx\n", i, r);
+			printf("[+]gaster_readmem response[%zd] is %" PRIx64 "\n", i, r);
 		}
 		free(response);
 		return true;
@@ -1707,15 +1709,15 @@ gaster_writemem(usb_handle_t *handle, const char *addr_str, const char* value_st
 		if(gaster_command(handle, data, data_sz, &response, len + 2 * sizeof(r))) {
 		memcpy(&r, response, sizeof(r));
 		if(r != DONE_MAGIC) {
-			printf("[-]gaster_writemem response[0] is not DONE_MAGIC, which is %llx\n", r);
+			printf("[-]gaster_writemem response[0] is not DONE_MAGIC, which is %" PRIx64 "\n", r);
 			free(response);
 			return false;
 		}
 		memcpy(&r, response + sizeof(r), sizeof(r));
-		printf("[+]gaster_writemem response[1] (dest) is %llx\n", r);
+		printf("[+]gaster_writemem response[1] (dest) is %" PRIx64 "\n", r);
 		//memcpy(dst, response + 2 * sizeof(r), len);
 		memcpy(&r, response + 2 * sizeof(r), sizeof(r));
-		printf("[+]gaster_writemem response[2] is %llx\n", r);
+		printf("[+]gaster_writemem response[2] is %" PRIx64 "\n", r);
 		free(response);
 		return true;
 	}
